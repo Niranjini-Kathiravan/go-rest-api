@@ -1,9 +1,10 @@
 POST http://localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5pcnVAZ21haWwuY29tIiwiZXhwIjoxNzUyNzc3MTMwLCJ1c2VySWQiOjF9.JT9Vy8S9lMv1wA_WaV8v3-VOYNOxgxMVou2ZpnudnW0
 
 {
-  "name": "Test Event 2",
-  "description": "Another test event",
+  "name": "Niru",
+  "description": "Beautiful Girl",
   "location": "Online",
   "datetime": "2025-07-16T18:00:00Z"
 }
