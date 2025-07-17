@@ -1,0 +1,19 @@
+# Go build stuff
+*.exe
+*.log
+*.out
+*.test
+
+# Database
+api.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# Modules
+vendor/
+
+# Env
+.env
