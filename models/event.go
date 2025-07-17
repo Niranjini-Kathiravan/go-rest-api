@@ -15,6 +15,7 @@ type Event struct {
 	UserID      int       `json:"user_id"`
 }
 
+// Save inserts a new event into the database
 func (e *Event) Save() error {
 	query := `INSERT INTO events(name, description, location, datetime, user_id)
 	          VALUES (?, ?, ?, ?, ?)`
@@ -39,6 +40,24 @@ func (e *Event) Save() error {
 	return nil
 }
 
+// Update modifies an existing event in the database
+func (e *Event) Update() error {
+	query := `
+	UPDATE events
+	SET name = ?, description = ?, location = ?, datetime = ?
+	WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.Name, e.Description, e.Location, e.Datetime, e.ID)
+	return err
+}
+
+
 func GetAllEvents() ([]Event, error) {
 	query := "SELECT * FROM events"
 	rows, err := db.DB.Query(query)
@@ -59,8 +78,8 @@ func GetAllEvents() ([]Event, error) {
 	return events, nil
 }
 
-func GetEventById(id int64) (*Event, error) {
 
+func GetEventById(id int64) (*Event, error) {
 	query := "SELECT * FROM events WHERE id = ?"
 	row := db.DB.QueryRow(query, id)
 
@@ -71,4 +90,16 @@ func GetEventById(id int64) (*Event, error) {
 	}
 
 	return &event, nil
+}
+
+func (event Event) Delete() error{
+	query := "DELETE FROM events WHERE id = ?"
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+	_, err = stmt.Exec(event.ID)
+	return err
 }

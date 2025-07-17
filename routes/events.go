@@ -66,3 +66,58 @@ func createEvent(context *gin.Context) {
 		"event":   event,
 	})
 }
+
+func updateEvent(context *gin.Context) {
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id"})
+		return
+	}
+
+	_, err = models.GetEventById(eventId)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"message": "Event not found."})
+		return
+	}
+
+	var updatedEvent models.Event
+	if err := context.ShouldBindJSON(&updatedEvent); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid event data.", "error": err.Error()})
+		return
+	}
+
+	updatedEvent.ID = eventId
+	updatedEvent.UserID = 1 // temporarily hardcoded
+
+	if err := updatedEvent.Update(); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the event."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Event updated successfully"})
+}
+
+func deleteEvent(context *gin.Context) {
+
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id"})
+		return
+	}
+
+	event, err := models.GetEventById(eventId)
+
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"message": "Event not found."})
+		return
+	}
+
+	err = event.Delete()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not send back the event"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
+
+}
